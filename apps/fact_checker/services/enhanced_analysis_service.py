@@ -6,6 +6,7 @@ from asgiref.sync import sync_to_async
 from apps.fact_checker.models import FactCheckSession, AnalysisStep, Source
 from apps.fact_checker.services.chatgpt_service import ChatGPTService
 from apps.fact_checker.services.chatgpt_web_search_service import ChatGPTWebSearchService
+from apps.fact_checker.services.chatgpt_shallow_analysis_service import ChatGPTResearchService
 from apps.fact_checker.services.google_search_service import GoogleSearchService
 from apps.fact_checker.services.web_crawler_service import WebCrawlerService
 
@@ -14,13 +15,16 @@ logger = logging.getLogger(__name__)
 
 class EnhancedAnalysisService:
     """
-    Enhanced analysis service that can use either traditional workflow or web search workflow
+    Enhanced analysis service that can use traditional workflow, web search workflow, or research workflow
     """
     
-    def __init__(self, use_web_search: bool = False):
+    def __init__(self, use_web_search: bool = False, use_research: bool = False):
         self.use_web_search = use_web_search
+        self.use_research = use_research
         
-        if use_web_search:
+        if use_research:
+            self.research_service = ChatGPTResearchService()
+        elif use_web_search:
             self.chatgpt_service = ChatGPTWebSearchService()
         else:
             self.chatgpt_service = ChatGPTService()
@@ -29,16 +33,18 @@ class EnhancedAnalysisService:
     
     async def perform_complete_analysis(self, session: FactCheckSession) -> Dict[str, Any]:
         """
-        Perform complete fact-checking analysis using either traditional or web search workflow
+        Perform complete analysis using traditional, web search, or research workflow
         """
         try:
-            logger.info(f"Starting complete analysis for session {session.session_id} (web_search={self.use_web_search})")
+            logger.info(f"Starting complete analysis for session {session.session_id} (web_search={self.use_web_search}, research={self.use_research})")
             
             # Update session status
             session.status = 'analyzing'
             await sync_to_async(session.save)()
             
-            if self.use_web_search:
+            if self.use_research:
+                return await self._perform_research_analysis(session)
+            elif self.use_web_search:
                 return await self._perform_web_search_analysis(session)
             else:
                 return await self._perform_traditional_analysis(session)
@@ -48,7 +54,7 @@ class EnhancedAnalysisService:
             return await self._handle_analysis_error(session, f"Analysis error: {str(e)}", {})
         finally:
             # Cleanup resources if using traditional workflow
-            if not self.use_web_search and hasattr(self, 'crawler_service'):
+            if not self.use_web_search and not self.use_research and hasattr(self, 'crawler_service'):
                 await self.crawler_service.cleanup()
     
     async def _perform_web_search_analysis(self, session: FactCheckSession) -> Dict[str, Any]:
@@ -114,6 +120,73 @@ class EnhancedAnalysisService:
             
         except Exception as e:
             logger.error(f"Error in web search analysis: {str(e)}")
+            raise
+    
+    async def _perform_research_analysis(self, session: FactCheckSession) -> Dict[str, Any]:
+        """
+        Perform general research analysis using ChatGPT's research service
+        """
+        try:
+            # Get image data if present
+            image_data = None
+            if session.uploaded_image:
+                image_path = session.uploaded_image.path
+                image_data = await sync_to_async(self._read_image_data)(image_path)
+            
+            # Perform multi-step comprehensive research with web search
+            # The ChatGPTResearchService handles creating its own AnalysisStep records
+            result = await self.research_service.conduct_research_with_web_search(
+                session, session.user_input, image_data
+            )
+            
+            if result.get('error'):
+                return await self._handle_analysis_error(session, "Research analysis failed", result)
+            
+            # Extract research report information
+            final_report = result.get('final_report', {})
+            research_summary = result.get('research_summary', 'Research completed successfully')
+            markdown_content = result.get('markdown_content', '') or final_report.get('markdown_content', '')
+            
+            # For research mode, we want the full markdown content in analysis_summary
+            # so it can be properly displayed in the frontend
+            full_markdown = markdown_content if markdown_content else research_summary
+            
+            # Update session with final results
+            session.status = 'completed'
+            session.final_verdict = 'completed'  # Research doesn't have traditional verdicts
+            session.confidence_score = 0.9  # High confidence for completed research
+            session.analysis_summary = full_markdown  # Store full markdown content
+            session.completed_at = timezone.now()
+            await sync_to_async(session.save)()
+            
+            # Store citations as sources if available
+            citations = result.get('citations', [])
+            if citations:
+                logger.info(f"Storing {len(citations)} citations as sources")
+                await self._store_web_search_citations(session, citations)
+            else:
+                logger.warning("No citations found in research result")
+            
+            logger.info(f"Research analysis completed for session {session.session_id}")
+            
+            return {
+                'success': True,
+                'session_id': str(session.session_id),
+                'status': 'completed',
+                'research_type': 'general_research',
+                'summary': full_markdown,  # Return full markdown content
+                'detailed_results': result,
+                'research_report': final_report,
+                'markdown_content': markdown_content,
+                'format': 'markdown',
+                'web_search_used': True,
+                'multi_step_analysis': True,
+                'citations': citations,
+                'methodology': result.get('methodology', 'Three-step web search research process')
+            }
+            
+        except Exception as e:
+            logger.error(f"Error in research analysis: {str(e)}")
             raise
     
     async def _perform_traditional_analysis(self, session: FactCheckSession) -> Dict[str, Any]:

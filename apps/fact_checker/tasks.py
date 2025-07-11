@@ -19,10 +19,17 @@ def perform_fact_check_task(self, session_id: str):
         # Get session
         session = FactCheckSession.objects.get(session_id=session_id)
         
-        # Create analysis service with web search setting
+        # Create analysis service with web search and research mode settings
         from django.conf import settings
         use_web_search = getattr(settings, 'USE_WEB_SEARCH', False)
-        analysis_service = EnhancedAnalysisService(use_web_search=use_web_search)
+        
+        # Check if this is a research session
+        use_research = session.mode == 'research'
+        
+        analysis_service = EnhancedAnalysisService(
+            use_web_search=use_web_search,
+            use_research=use_research
+        )
         
         # Run async analysis in event loop
         loop = asyncio.new_event_loop()

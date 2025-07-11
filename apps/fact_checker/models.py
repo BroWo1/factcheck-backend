@@ -21,10 +21,16 @@ class FactCheckSession(models.Model):
         ('false', 'False'),
     ]
     
+    MODE_CHOICES = [
+        ('fact_check', 'Fact Check'),
+        ('research', 'Research'),
+    ]
+    
     session_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     user_input = models.TextField()
     uploaded_image = models.ImageField(upload_to='fact_check_images/', null=True, blank=True)
+    mode = models.CharField(max_length=20, choices=MODE_CHOICES, default='fact_check')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     final_verdict = models.CharField(max_length=20, choices=VERDICT_CHOICES, null=True, blank=True)
     confidence_score = models.FloatField(null=True, blank=True)
@@ -56,6 +62,12 @@ class AnalysisStep(models.Model):
         ('deeper_exploration', 'Deeper Exploration'),
         ('source_credibility_evaluation', 'Source Credibility Evaluation'),
         ('final_conclusion', 'Final Conclusion'),
+
+        # Research Workflow
+        ('research_understanding', 'Research Understanding'),
+        ('general_research', 'General Research'),
+        ('specific_research', 'Specific Research'),
+        ('research_report', 'Research Report'),
 
         # Legacy/Other (can be removed if no longer used)
         ('search', 'Legacy Search'),

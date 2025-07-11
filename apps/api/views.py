@@ -39,6 +39,7 @@ def fact_check_create(request):
         session = FactCheckSession.objects.create(
             user_input=serializer.validated_data['user_input'],
             uploaded_image=serializer.validated_data.get('uploaded_image'),
+            mode=serializer.validated_data.get('mode', 'fact_check'),
             user=request.user if request.user.is_authenticated else None
         )
         

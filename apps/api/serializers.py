@@ -8,7 +8,7 @@ class FactCheckSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = FactCheckSession
         fields = [
-            'session_id', 'user_input', 'uploaded_image', 'status', 
+            'session_id', 'user_input', 'uploaded_image', 'mode', 'status', 
             'final_verdict', 'confidence_score', 'analysis_summary',
             'created_at', 'updated_at', 'completed_at'
         ]
@@ -87,6 +87,11 @@ class FactCheckRequestSerializer(serializers.Serializer):
     
     user_input = serializers.CharField(max_length=5000)
     uploaded_image = serializers.ImageField(required=False, allow_null=True)
+    mode = serializers.ChoiceField(
+        choices=[('fact_check', 'Fact Check'), ('research', 'Research')],
+        default='fact_check',
+        required=False
+    )
     
     def validate_user_input(self, value):
         """Validate user input"""
