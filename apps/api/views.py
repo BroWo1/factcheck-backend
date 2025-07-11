@@ -95,7 +95,20 @@ def fact_check_status(request, session_id):
         
         # For web search mode, expect 4 steps instead of traditional 5-6 steps
         use_web_search = getattr(settings, 'USE_WEB_SEARCH', False)
-        expected_steps = 4 if use_web_search else 5
+        
+        # Determine if this is a multi-step web search analysis by checking step types
+        multi_step_web_search = any(
+            step['step_type'] in ['initial_web_search', 'deeper_exploration', 'source_credibility_evaluation', 'final_conclusion']
+            for step in progress_steps
+        )
+        
+        if multi_step_web_search:
+            expected_steps = 4
+        elif use_web_search:
+            expected_steps = 4  # Legacy single-step web search
+        else:
+            expected_steps = 5  # Traditional analysis
+            
         progress_percentage = (completed_steps / expected_steps) * 100 if expected_steps > 0 else 0
         
         progress_data = {
@@ -106,6 +119,8 @@ def fact_check_status(request, session_id):
             'total_steps': total_steps,
             'expected_steps': expected_steps,
             'failed_steps': failed_steps,
+            'multi_step_web_search': multi_step_web_search,
+            'use_web_search': use_web_search,
             'current_step': {
                 'step_number': current_step['step_number'] if current_step else None,
                 'description': current_step['description'] if current_step else None,

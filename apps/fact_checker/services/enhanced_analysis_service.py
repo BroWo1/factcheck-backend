@@ -624,8 +624,19 @@ class EnhancedAnalysisService:
         failed_steps = len([step for step in progress_steps if step['status'] == 'failed'])
         current_step = next((step for step in progress_steps if step['status'] == 'in_progress'), None)
         
-        # For web search mode, expect 4 steps instead of traditional 5-6 steps
-        expected_steps = 4 if self.use_web_search else 5
+        # Determine expected steps based on analysis type
+        multi_step_web_search = any(
+            step['step_type'] in ['initial_web_search', 'deeper_exploration', 'source_credibility_evaluation', 'final_conclusion']
+            for step in progress_steps
+        )
+        
+        if multi_step_web_search:
+            expected_steps = 4
+        elif self.use_web_search:
+            expected_steps = 4  # Legacy single-step web search
+        else:
+            expected_steps = 5  # Traditional analysis
+            
         progress_percentage = (completed_steps / expected_steps) * 100 if expected_steps > 0 else 0
         
         return {
@@ -636,6 +647,7 @@ class EnhancedAnalysisService:
             'total_steps': total_steps,
             'expected_steps': expected_steps,
             'failed_steps': failed_steps,
+            'multi_step_web_search': multi_step_web_search,
             'current_step': {
                 'step_number': current_step['step_number'] if current_step else None,
                 'description': current_step['description'] if current_step else None,

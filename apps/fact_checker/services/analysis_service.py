@@ -109,15 +109,28 @@ class AnalysisService:
         failed_steps = len([step for step in progress_steps if step['status'] == 'failed'])
         current_step = next((step for step in progress_steps if step['status'] == 'in_progress'), None)
         
-        progress_percentage = (completed_steps / total_steps) * 100 if total_steps > 0 else 0
+        # Determine expected steps based on analysis type
+        multi_step_web_search = any(
+            step['step_type'] in ['initial_web_search', 'deeper_exploration', 'source_credibility_evaluation', 'final_conclusion']
+            for step in progress_steps
+        )
+        
+        if multi_step_web_search:
+            expected_steps = 4
+        else:
+            expected_steps = 5  # Traditional analysis
+            
+        progress_percentage = (completed_steps / expected_steps) * 100 if expected_steps > 0 else 0
         
         return {
             'session_id': str(session.session_id),
             'status': session.status,
-            'progress_percentage': progress_percentage,
+            'progress_percentage': min(progress_percentage, 100),  # Cap at 100%
             'completed_steps': completed_steps,
             'total_steps': total_steps,
+            'expected_steps': expected_steps,
             'failed_steps': failed_steps,
+            'multi_step_web_search': multi_step_web_search,
             'current_step': {
                 'step_number': current_step['step_number'] if current_step else None,
                 'description': current_step['description'] if current_step else None,

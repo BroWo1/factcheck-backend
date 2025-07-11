@@ -39141,3 +39141,56 @@ INFO 2025-07-11 11:11:31,291 middleware 26647 6112342016 API Response: 200 for G
 INFO 2025-07-11 11:11:31,297 middleware 26647 6112342016 API Request: GET /api/fact-check/66132c0c-c84b-4861-97a6-b0233fca9534/results/ from 127.0.0.1
 INFO 2025-07-11 11:11:31,305 middleware 26647 6112342016 API Response: 200 for GET /api/fact-check/66132c0c-c84b-4861-97a6-b0233fca9534/results/ (0.008s)
 INFO 2025-07-11 11:22:39,139 server 26647 8546991872 Killed 0 pending application instances
+INFO 2025-07-11 16:34:43,842 cli 58806 8546991872 Starting server at tcp:port=8000:interface=0.0.0.0
+INFO 2025-07-11 16:34:43,842 server 58806 8546991872 HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+INFO 2025-07-11 16:34:43,842 server 58806 8546991872 Configuring endpoint tcp:port=8000:interface=0.0.0.0
+INFO 2025-07-11 16:34:43,843 server 58806 8546991872 Listening on TCP address 0.0.0.0:8000
+INFO 2025-07-11 16:35:03,081 middleware 58806 6109540352 API Request: POST /api/fact-check/ from 127.0.0.1
+INFO 2025-07-11 16:35:03,697 views 58806 6109540352 Created fact-check session ca95c0d5-1dfa-40e2-83d7-9b20ecad9d0a
+INFO 2025-07-11 16:35:03,767 middleware 58806 6109540352 API Response: 201 for POST /api/fact-check/ (0.686s)
+INFO 2025-07-11 16:35:03,789 tasks 58344 8546991872 Starting fact-check task for session ca95c0d5-1dfa-40e2-83d7-9b20ecad9d0a
+INFO 2025-07-11 16:35:03,843 enhanced_analysis_service 58344 8546991872 Starting complete analysis for session ca95c0d5-1dfa-40e2-83d7-9b20ecad9d0a (web_search=True, research=False)
+INFO 2025-07-11 16:35:03,846 chatgpt_web_search_service 58344 8546991872 Starting multi-step web search analysis for session ca95c0d5-1dfa-40e2-83d7-9b20ecad9d0a
+INFO 2025-07-11 16:35:08,783 middleware 58806 6109540352 API Request: GET /api/fact-check/ca95c0d5-1dfa-40e2-83d7-9b20ecad9d0a/status/ from 127.0.0.1
+INFO 2025-07-11 16:35:08,788 middleware 58806 6109540352 API Response: 200 for GET /api/fact-check/ca95c0d5-1dfa-40e2-83d7-9b20ecad9d0a/status/ (0.005s)
+ERROR 2025-07-11 16:35:09,806 chatgpt_web_search_service 58344 8546991872 Error in Step 1 initial search: Connection error.
+ERROR 2025-07-11 16:35:09,808 chatgpt_web_search_service 58344 8546991872 Step 1 failed: Connection error.
+ERROR 2025-07-11 16:35:09,808 enhanced_analysis_service 58344 8546991872 Analysis error for session ca95c0d5-1dfa-40e2-83d7-9b20ecad9d0a: Web search analysis failed
+INFO 2025-07-11 16:35:09,809 tasks 58344 8546991872 Fact-check task completed for session ca95c0d5-1dfa-40e2-83d7-9b20ecad9d0a
+INFO 2025-07-11 16:35:09,821 tasks 58344 8546991872 Sent WebSocket update for session ca95c0d5-1dfa-40e2-83d7-9b20ecad9d0a
+INFO 2025-07-11 16:35:14,722 middleware 58806 6109540352 API Request: GET /api/fact-check/ca95c0d5-1dfa-40e2-83d7-9b20ecad9d0a/status/ from 127.0.0.1
+INFO 2025-07-11 16:35:14,726 middleware 58806 6109540352 API Response: 200 for GET /api/fact-check/ca95c0d5-1dfa-40e2-83d7-9b20ecad9d0a/status/ (0.004s)
+INFO 2025-07-11 16:35:32,329 middleware 58806 6109540352 API Request: POST /api/fact-check/ from 127.0.0.1
+INFO 2025-07-11 16:35:32,333 views 58806 6109540352 Created fact-check session ce46f75c-b3de-46ac-98dc-bbe5079c19a7
+INFO 2025-07-11 16:35:32,351 tasks 58344 8546991872 Starting fact-check task for session ce46f75c-b3de-46ac-98dc-bbe5079c19a7
+INFO 2025-07-11 16:35:32,351 middleware 58806 6109540352 API Response: 201 for POST /api/fact-check/ (0.022s)
+INFO 2025-07-11 16:35:32,372 enhanced_analysis_service 58344 8546991872 Starting complete analysis for session ce46f75c-b3de-46ac-98dc-bbe5079c19a7 (web_search=True, research=False)
+INFO 2025-07-11 16:35:32,373 chatgpt_web_search_service 58344 8546991872 Starting multi-step web search analysis for session ce46f75c-b3de-46ac-98dc-bbe5079c19a7
+INFO 2025-07-11 16:35:37,727 middleware 58806 6109540352 API Request: GET /api/fact-check/ce46f75c-b3de-46ac-98dc-bbe5079c19a7/status/ from 127.0.0.1
+INFO 2025-07-11 16:35:37,732 middleware 58806 6109540352 API Response: 200 for GET /api/fact-check/ce46f75c-b3de-46ac-98dc-bbe5079c19a7/status/ (0.005s)
+ERROR 2025-07-11 16:35:37,895 chatgpt_web_search_service 58344 8546991872 Error in Step 1 initial search: Connection error.
+ERROR 2025-07-11 16:35:37,898 chatgpt_web_search_service 58344 8546991872 Step 1 failed: Connection error.
+ERROR 2025-07-11 16:35:37,898 enhanced_analysis_service 58344 8546991872 Analysis error for session ce46f75c-b3de-46ac-98dc-bbe5079c19a7: Web search analysis failed
+INFO 2025-07-11 16:35:37,900 tasks 58344 8546991872 Fact-check task completed for session ce46f75c-b3de-46ac-98dc-bbe5079c19a7
+INFO 2025-07-11 16:35:37,909 tasks 58344 8546991872 Sent WebSocket update for session ce46f75c-b3de-46ac-98dc-bbe5079c19a7
+INFO 2025-07-11 16:35:42,363 middleware 58806 6109540352 API Request: GET /api/fact-check/ce46f75c-b3de-46ac-98dc-bbe5079c19a7/status/ from 127.0.0.1
+INFO 2025-07-11 16:35:42,370 middleware 58806 6109540352 API Response: 200 for GET /api/fact-check/ce46f75c-b3de-46ac-98dc-bbe5079c19a7/status/ (0.007s)
+INFO 2025-07-11 16:37:25,337 cli 60971 8546991872 Starting server at tcp:port=8000:interface=0.0.0.0
+INFO 2025-07-11 16:37:25,338 server 60971 8546991872 HTTP/2 support not enabled (install the http2 and tls Twisted extras)
+INFO 2025-07-11 16:37:25,338 server 60971 8546991872 Configuring endpoint tcp:port=8000:interface=0.0.0.0
+INFO 2025-07-11 16:37:25,338 server 60971 8546991872 Listening on TCP address 0.0.0.0:8000
+INFO 2025-07-11 16:37:32,002 middleware 60971 6150778880 API Request: POST /api/fact-check/ from 127.0.0.1
+INFO 2025-07-11 16:37:32,487 views 60971 6150778880 Created fact-check session eefeee1d-80c1-47bc-b4ca-5e5696b1d4d1
+INFO 2025-07-11 16:37:32,557 middleware 60971 6150778880 API Response: 201 for POST /api/fact-check/ (0.556s)
+INFO 2025-07-11 16:37:32,576 tasks 61088 8546991872 Starting fact-check task for session eefeee1d-80c1-47bc-b4ca-5e5696b1d4d1
+INFO 2025-07-11 16:37:32,632 enhanced_analysis_service 61088 8546991872 Starting complete analysis for session eefeee1d-80c1-47bc-b4ca-5e5696b1d4d1 (web_search=True, research=False)
+INFO 2025-07-11 16:37:32,641 chatgpt_web_search_service 61088 8546991872 Starting multi-step web search analysis for session eefeee1d-80c1-47bc-b4ca-5e5696b1d4d1
+INFO 2025-07-11 16:37:37,738 middleware 60971 6150778880 API Request: GET /api/fact-check/eefeee1d-80c1-47bc-b4ca-5e5696b1d4d1/status/ from 127.0.0.1
+INFO 2025-07-11 16:37:37,744 middleware 60971 6150778880 API Response: 200 for GET /api/fact-check/eefeee1d-80c1-47bc-b4ca-5e5696b1d4d1/status/ (0.006s)
+ERROR 2025-07-11 16:37:40,075 chatgpt_web_search_service 61088 8546991872 Error in Step 1 initial search: Connection error.
+ERROR 2025-07-11 16:37:40,077 chatgpt_web_search_service 61088 8546991872 Step 1 failed: Connection error.
+ERROR 2025-07-11 16:37:40,077 enhanced_analysis_service 61088 8546991872 Analysis error for session eefeee1d-80c1-47bc-b4ca-5e5696b1d4d1: Web search analysis failed
+INFO 2025-07-11 16:37:40,078 tasks 61088 8546991872 Fact-check task completed for session eefeee1d-80c1-47bc-b4ca-5e5696b1d4d1
+INFO 2025-07-11 16:37:40,090 tasks 61088 8546991872 Sent WebSocket update for session eefeee1d-80c1-47bc-b4ca-5e5696b1d4d1
+INFO 2025-07-11 16:37:42,729 middleware 60971 6150778880 API Request: GET /api/fact-check/eefeee1d-80c1-47bc-b4ca-5e5696b1d4d1/status/ from 127.0.0.1
+INFO 2025-07-11 16:37:42,733 middleware 60971 6150778880 API Response: 200 for GET /api/fact-check/eefeee1d-80c1-47bc-b4ca-5e5696b1d4d1/status/ (0.004s)
