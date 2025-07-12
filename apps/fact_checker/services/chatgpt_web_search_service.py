@@ -390,7 +390,7 @@ class ChatGPTWebSearchService:
             )
             
             prompt = f"""
-            You are an expert fact-checker performing an initial search for credible sources. Analyze the following claim and search for the most authoritative and credible sources available. Use English/Chinese for output based on the user's input language.
+            You are an expert fact-checker performing an initial search for credible sources. Analyze the following claim and search for the most authoritative and credible sources available. Use the user's input language (English or Chinese) for your response.
 
             Claim: {user_input}
 

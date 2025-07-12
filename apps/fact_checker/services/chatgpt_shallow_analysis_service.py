@@ -373,7 +373,7 @@ class ChatGPTResearchService:
         """
         try:
             prompt = f"""
-            You are an expert fact-checker with access to current web information. Analyze the following claim and provide a structured analysis using web search to enhance your assessment.
+            You are an expert fact-checker with access to current web information. Analyze the following claim and provide a structured analysis using web search to enhance your assessment. Use the user's input language (English or Chinese) for your response.
             
             Claim: {user_input}
             
@@ -1052,7 +1052,7 @@ class ChatGPTResearchService:
         """
         try:
             prompt = f"""
-            You are an expert researcher writing a comprehensive research report. Your goal is to help the audience fully understand the answer to their research question through clear, engaging writing.
+            You are an expert researcher writing a comprehensive research report. Your goal is to help the audience fully understand the answer to their research question through clear, engaging writing. 
 
             Original Research Request: {user_input}
 
